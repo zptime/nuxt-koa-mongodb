@@ -17,6 +17,9 @@
     "@nuxtjs/workbox": "^3.0.0-beta.16",
     "cross-env": "^5.2.0",
     "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-json": "^2.0.2",
+    "koa-router": "^7.4.0",
     "nuxt": "^2.0.0"
   },
   "devDependencies": {

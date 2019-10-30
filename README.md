@@ -141,4 +141,34 @@ workbox: {
 }
 ```
 
+配置效果展示：如图所示，更改了缓存的名称
 ![配置效果展示](https://github.com/zptime/resources/blob/master/images/nuxt-pwa-cache.png)
+
+## koa-router配置
+
+> 文档地址：[https://github.com/ZijianHe/koa-router](https://github.com/ZijianHe/koa-router)
+
+- [koa-json](https://github.com/koajs/json)：美观地输出JSON response的Koa中间件
+- [koa-bodyparser](https://github.com/koajs/bodyparser)：Koa没有内置Request Body的解析器，当需要解析请求体时，就要额外加载该中间件了，它支持x-www-form-urlencoded, application/json等格式的请求体，但不支持form-data的请求体。
+- [koa-router]((https://github.com/ZijianHe/koa-router))：koa路由中间件
+
+```js
+// 安装相应文件
+$ npm install koa-router koa-bodyparser koa-json
+
+// server/index.js 配置
+// 1.配置koa-json
+const json = require('koa-json')
+app.use(json())
+
+// 2.配置koa-bodyparser
+const bodyParser = require('koa-bodyparser')
+app.use(bodyParser())
+
+// 3.配置koa-router
+const user = require('./routes/user')
+app.use(user.routes(), user.allowedMethods())
+
+// 创建server/routes/user.js文件，该文件写了一些测试接口，对server/mock/user.json中的测试数据进行增删查改等操作。
+
+```
