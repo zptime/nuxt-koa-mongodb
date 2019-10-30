@@ -28,6 +28,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { src: '~plugins/axios' }
   ],
   /*
   ** Nuxt.js dev-modules
@@ -49,6 +50,13 @@ module.exports = {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    proxy: true, // 代理
+    debug: false,
+    baseURL: `http://${process.env.HOST || 'localhost'}:${process.env.PORT ||
+      3000}`
+  },
+  proxy: { // 代理配置
+    '/api': 'http://localhost:3000'
   },
   /*
   ** Build configuration
@@ -57,7 +65,18 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
-    extend (config, ctx) {
+    extend (config, { isDev, isClient }) {
+      if (isDev && isClient) {
+        config.module.rules.push({
+          enforce: 'pre',
+          test: /\.(js|vue)$/,
+          loader: 'eslint-loader',
+          exclude: /(node_modules)/,
+          options: {
+            fix: true
+          }
+        })
+      }
     }
   }
 }
