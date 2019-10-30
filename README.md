@@ -84,3 +84,61 @@ export default ({ $axios, redirect }) => {
   })
 }
 ```
+
+## @nuxtjs/pwa 扩展
+
+> 文档地址：[https://pwa.nuxtjs.org/](https://pwa.nuxtjs.org/)
+
+```js
+// 安装@nuxtjs/workbox
+$ npm i @nuxtjs/workbox
+
+// nuxt.config.js
+manifest: {
+  name: 'Nuxt Koa Mongodb',
+  short_name: 'Framework',
+  lang: 'en',
+  display: 'fullscreen',
+  start_url: '/',
+  theme_color: '#42d69c',
+  background_color: '#fff',
+  icons: [
+    {
+      src: '/icon.png',
+      sizes: '180x180',
+      type: 'image/png'
+    }
+  ]
+},
+workbox: {
+  dev: true, // 开发人员模式下启用
+  config: {
+    debug: true // 是否打开调试
+  },
+  cacheNames: {
+    prefix: 'm',
+    suffix: process.env.npm_package_version,
+    precache: 'custom-precache-name',
+    runtime: 'custom-runtime-name'
+  },
+  cacheOptions: {
+    cacheId: process.env.npm_package_name,
+    revision: process.env.npm_package_version
+  },
+  preCaching: [
+    '/favicon.ico'
+  ],
+  runtimeCaching: [
+    {
+      // Should be a regex string. Compiles into new RegExp('https://my-cdn.com/.*')
+      urlPattern: 'https://jsonplaceholder.typicode.com/*',
+      // Defaults to `networkFirst` if omitted
+      handler: 'networkFirst',
+      // Defaults to `GET` if omitted
+      method: 'GET'
+    }
+  ]
+}
+```
+
+![配置效果展示](https://github.com/zptime/resources/blob/master/images/nuxt-pwa-cache.png)
