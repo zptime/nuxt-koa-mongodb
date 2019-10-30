@@ -13,8 +13,8 @@ export default ({ $axios, redirect }) => {
 
   $axios.onError((error) => {
     const code = parseInt(error.response && error.response.status)
-    if (code === 400) {
-      redirect('/400')
+    if (code === 404) {
+      redirect('/404')
     }
     if (code === 500) {
       redirect('/500')

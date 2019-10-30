@@ -73,6 +73,7 @@ export default ({ $axios, redirect }) => {
 
   $axios.onError((error) => {
     const code = parseInt(error.response && error.response.status)
+    // 重定向到404.vue 或者 500.vue
     if (code === 400) {
       redirect('/400')
     }
@@ -150,25 +151,28 @@ workbox: {
 
 - [koa-json](https://github.com/koajs/json)：美观地输出JSON response的Koa中间件
 - [koa-bodyparser](https://github.com/koajs/bodyparser)：Koa没有内置Request Body的解析器，当需要解析请求体时，就要额外加载该中间件了，它支持x-www-form-urlencoded, application/json等格式的请求体，但不支持form-data的请求体。
-- [koa-router]((https://github.com/ZijianHe/koa-router))：koa路由中间件
+- [koa-router](https://github.com/ZijianHe/koa-router)：koa路由中间件
+- 其他中间件列表：[https://github.com/koajs/koa/wiki](https://github.com/koajs/koa/wiki)
+- nodemon模块：作用是在你的服务正在运行的情况下，修改文件可以自动重启服务
 
 ```js
-// 安装相应文件
+// 1.安装相应文件
 $ npm install koa-router koa-bodyparser koa-json
 
-// server/index.js 配置
-// 1.配置koa-json
+// 2.server/index.js 配置
+// 配置koa-json
 const json = require('koa-json')
 app.use(json())
 
-// 2.配置koa-bodyparser
+// 配置koa-bodyparser
 const bodyParser = require('koa-bodyparser')
 app.use(bodyParser())
 
-// 3.配置koa-router
+// 配置koa-router
 const user = require('./routes/user')
 app.use(user.routes(), user.allowedMethods())
 
 // 创建server/routes/user.js文件，该文件写了一些测试接口，对server/mock/user.json中的测试数据进行增删查改等操作。
+// 测试页面为restful.vue，本地可在 http://localhost:3000/restful 中查看
 
 ```

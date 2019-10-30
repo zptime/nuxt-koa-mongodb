@@ -6,14 +6,14 @@ const json = require('koa-json')
 
 const app = new Koa()
 
-app.use(json()) // 美观地输出JSON response
-app.use(bodyParser()) // 配置解析post的bodypaser
-
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
 config.dev = app.env !== 'production'
 
 const user = require('./routes/user')
+
+app.use(json()) // 美观地输出JSON response
+app.use(bodyParser()) // 配置解析post的bodypaser
 
 async function start () {
   // Instantiate nuxt.js

@@ -96,7 +96,7 @@ module.exports = {
     ]
   },
   workbox: {
-    dev: true, // 开发人员模式下启用
+    dev: false, // 开发人员模式下启用
     config: {
       debug: true // 是否打开调试
     },
