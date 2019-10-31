@@ -10,6 +10,7 @@
         提交
       </button>
     </div>
+    <div>说明：用户名为任意值，密码为123才能通过验证</div>
     <div class="lists">
       <div class="list">
         <h3>获取所有用户列表(GET /api/users)</h3>

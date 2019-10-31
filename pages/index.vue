@@ -10,18 +10,16 @@
       </h2>
       <div class="links">
         <a
-          href="https://nuxtjs.org/"
-          target="_blank"
+          href="/mongo"
           class="button--green"
         >
-          Documentation
+          mongodb 接口测试
         </a>
         <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
+          href="/restful"
           class="button--grey"
         >
-          GitHub
+          restful api 接口测试
         </a>
       </div>
     </div>
