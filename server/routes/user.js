@@ -16,16 +16,15 @@ router.post('/login', (ctx) => {
       data: null,
       msg: '用户名或密码错误'
     }
-    throw new Error('Invalid username or password')
-  }
-
-  ctx.body = {
-    code: 0,
-    data: {
-      username,
-      password
-    },
-    msg: '登录成功'
+  } else {
+    ctx.body = {
+      code: 0,
+      data: {
+        username,
+        password
+      },
+      msg: '登录成功'
+    }
   }
 })
 
@@ -38,54 +37,64 @@ router.post('/logout', (ctx) => {
   }
 })
 
-router.get('/listUsers', (ctx) => {
-  const data = fs.readFileSync(path.join(__dirname, '../api/', 'user.json'), 'utf8')
+// GET /api/users 获取所有用户列表
+router.get('/users', (ctx) => {
+  const data = fs.readFileSync(path.join(__dirname, '../mock/', 'user.json'), 'utf8')
   ctx.body = {
     code: 0,
-    data: data.toString(),
+    data,
     msg: '获取成功'
   }
 })
 
-// 添加的新用户数据
-const user = {
-  'user4': {
-    'name': 'mohit',
-    'password': 'password4',
-    'profession': 'teacher',
-    'id': 4
-  }
-}
-
-router.get('/addUser', (ctx) => {
-  let data = fs.readFileSync(path.join(__dirname, '../mock/', 'user.json'), 'utf8')
-  data = JSON.parse(data)
-  data.user4 = user.user4
+// GET /api/users/:id 获取单个用户信息
+router.get('/users/:id', (ctx) => {
+  const data = fs.readFileSync(path.join(__dirname, '../mock/', 'user.json'), 'utf8')
+  const user = JSON.parse(data).filter((item) => {
+    return item.id === Number(ctx.params.id)
+  })
   ctx.body = {
     code: 0,
-    data: JSON.stringify(data),
-    msg: '添加成功'
-  }
-})
-
-router.get('/user/:id', (ctx) => {
-  let data = fs.readFileSync(path.join(__dirname, '../mock/', 'user.json'), 'utf8')
-  data = JSON.parse(data)
-  const user = data['user' + ctx.params.id]
-  ctx.body = {
-    code: 0,
-    data: JSON.stringify(user),
+    data: user,
     msg: '查询成功'
   }
 })
 
-router.get('/deleteUser/:id', (ctx) => {
+// POST /api/users 新增用户数据
+router.post('/users', (ctx) => {
   let data = fs.readFileSync(path.join(__dirname, '../mock/', 'user.json'), 'utf8')
   data = JSON.parse(data)
-  delete data['user' + ctx.params.id]
+  data.push(ctx.request.body)
   ctx.body = {
     code: 0,
-    data: JSON.stringify(data),
+    data,
+    msg: '新增成功'
+  }
+})
+
+// PUT /api/users/:id 修改单个用户信息
+router.put('/users/:id', (ctx) => {
+  const data = fs.readFileSync(path.join(__dirname, '../mock/', 'user.json'), 'utf8')
+  let user = JSON.parse(data).filter((item) => {
+    return item.id === Number(ctx.params.id)
+  })
+  user = Object.assign(user[0], ctx.request.body)
+  ctx.body = {
+    code: 0,
+    data: user,
+    msg: '修改成功'
+  }
+})
+
+// DELETE /api/users/:id 删除单个用户信息
+router.delete('/users/:id', (ctx) => {
+  let data = fs.readFileSync(path.join(__dirname, '../mock/', 'user.json'), 'utf8')
+  data = JSON.parse(data).filter((item) => {
+    return item.id !== Number(ctx.params.id)
+  })
+  ctx.body = {
+    code: 0,
+    data,
     msg: '删除成功'
   }
 })

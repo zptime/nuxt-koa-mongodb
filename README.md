@@ -61,7 +61,6 @@ proxy: {
 export default ({ $axios, redirect }) => {
   // 请求拦截器
   $axios.onRequest((config) => {
-    // eslint-disable-next-line no-console
     console.log('Making request to ' + config.url)
     return config
   })
@@ -145,15 +144,15 @@ workbox: {
 配置效果展示：如图所示，更改了缓存的名称
 ![配置效果展示](https://github.com/zptime/resources/blob/master/images/nuxt-pwa-cache.png)
 
-## koa-router配置
+## koa-router 配置
 
 > 文档地址：[https://github.com/ZijianHe/koa-router](https://github.com/ZijianHe/koa-router)
 
-- [koa-json](https://github.com/koajs/json)：美观地输出JSON response的Koa中间件
-- [koa-bodyparser](https://github.com/koajs/bodyparser)：Koa没有内置Request Body的解析器，当需要解析请求体时，就要额外加载该中间件了，它支持x-www-form-urlencoded, application/json等格式的请求体，但不支持form-data的请求体。
-- [koa-router](https://github.com/ZijianHe/koa-router)：koa路由中间件
+- [koa-json](https://github.com/koajs/json)：美观地输出 JSON response 的 Koa 中间件
+- [koa-bodyparser](https://github.com/koajs/bodyparser)：Koa 没有内置 Request Body 的解析器，当需要解析请求体时，就要额外加载该中间件了，它支持 x-www-form-urlencoded, application/json 等格式的请求体，但不支持 form-data 的请求体。
+- [koa-router](https://github.com/ZijianHe/koa-router)：koa 路由中间件
 - 其他中间件列表：[https://github.com/koajs/koa/wiki](https://github.com/koajs/koa/wiki)
-- nodemon模块：作用是在你的服务正在运行的情况下，修改文件可以自动重启服务
+- nodemon 模块：作用是在你的服务正在运行的情况下，修改文件可以自动重启服务
 
 ```js
 // 1.安装相应文件
@@ -172,7 +171,131 @@ app.use(bodyParser())
 const user = require('./routes/user')
 app.use(user.routes(), user.allowedMethods())
 
-// 创建server/routes/user.js文件，该文件写了一些测试接口，对server/mock/user.json中的测试数据进行增删查改等操作。
-// 测试页面为restful.vue，本地可在 http://localhost:3000/restful 中查看
+// 3.创建server/router/user.js文件，测试接口举例：
+// 用户登录
+router.post('/login', (ctx) => {
+  const { username, password } = ctx.request.body
+  const valid = username.length && password === '123'
 
+  if (!valid) {
+    ctx.body = {
+      code: -1,
+      data: null,
+      msg: '用户名或密码错误'
+    }
+  } else {
+    ctx.body = {
+      code: 0,
+      data: {
+        username,
+        password
+      },
+      msg: '登录成功'
+    }
+  }
+})
 ```
+
+## Koa.js - RESTful APIs
+
+> 文档地址：[https://www.tutorialspoint.com/koajs/koajs_restful_apis.htm](https://www.tutorialspoint.com/koajs/koajs_restful_apis.htm)
+
+```js
+// 文件user.js中写了一些测试接口，对user.json中的测试数据进行增删查改等操作，这些接口都符合REST接口设计规范。
+// GET /api/users 获取所有用户列表
+router.get("/users", ctx => {
+  const data = fs.readFileSync(
+    path.join(__dirname, "../mock/", "user.json"),
+    "utf8"
+  );
+  ctx.body = {
+    code: 0,
+    data,
+    msg: "获取成功"
+  };
+});
+
+// GET /api/users/:id 获取单个用户信息
+router.get("/users/:id", ctx => {
+  const data = fs.readFileSync(
+    path.join(__dirname, "../mock/", "user.json"),
+    "utf8"
+  );
+  const user = JSON.parse(data).filter(item => {
+    return item.id === Number(ctx.params.id);
+  });
+  ctx.body = {
+    code: 0,
+    data: user,
+    msg: "查询成功"
+  };
+});
+
+// POST /api/users 新增用户数据
+router.post("/users", ctx => {
+  let data = fs.readFileSync(
+    path.join(__dirname, "../mock/", "user.json"),
+    "utf8"
+  );
+  data = JSON.parse(data);
+  data.push(ctx.request.body);
+  ctx.body = {
+    code: 0,
+    data,
+    msg: "新增成功"
+  };
+});
+
+// PUT /api/users/:id 修改单个用户信息
+router.put("/users/:id", ctx => {
+  const data = fs.readFileSync(
+    path.join(__dirname, "../mock/", "user.json"),
+    "utf8"
+  );
+  let user = JSON.parse(data).filter(item => {
+    return item.id === Number(ctx.params.id);
+  });
+  user = Object.assign(user[0], ctx.request.body);
+  ctx.body = {
+    code: 0,
+    data: user,
+    msg: "修改成功"
+  };
+});
+
+// DELETE /api/users/:id 删除单个用户信息
+router.delete("/users/:id", ctx => {
+  let data = fs.readFileSync(
+    path.join(__dirname, "../mock/", "user.json"),
+    "utf8"
+  );
+  data = JSON.parse(data).filter(item => {
+    return item.id !== Number(ctx.params.id);
+  });
+  ctx.body = {
+    code: 0,
+    data,
+    msg: "删除成功"
+  };
+});
+
+// 测试页面为restful.vue，本地可在 http://localhost:3000/restful 中查看
+const lists = await this.$axios.get("/api/users");
+const lists2 = await this.$axios.get("/api/users/1");
+const lists3 = await this.$axios.post("/api/users", {
+  id: 4,
+  name: "mongodb",
+  password: "password4",
+  profession: "database"
+});
+const lists4 = await this.$axios.put("/api/users/1", {
+  name: "mongodb",
+  password: "password4",
+  profession: "database"
+});
+const lists5 = await this.$axios.delete("/api/users/1");
+
+// 实践结果如下图所示：
+```
+
+![restful api实践结果](https://github.com/zptime/resources/blob/master/images/koa-restful-api.png)

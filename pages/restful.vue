@@ -10,6 +10,28 @@
         提交
       </button>
     </div>
+    <div class="lists">
+      <div class="list">
+        <h3>获取所有用户列表(GET /api/users)</h3>
+        <div>{{ userLists }}</div>
+      </div>
+      <div class="list">
+        <h3>获取单个用户信息(GET /api/users/:id)</h3>
+        <div>{{ user }}</div>
+      </div>
+      <div class="list">
+        <h3>新增用户数据(POST /api/users )</h3>
+        <div>{{ addUserLists }}</div>
+      </div>
+      <div class="list">
+        <h3>修改单个用户信息(PUT /api/users/:id )</h3>
+        <div>{{ modUser }}</div>
+      </div>
+      <div class="list">
+        <h3>删除单个用户信息(DELETE /api/users/:id )</h3>
+        <div>{{ delUserLists }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -17,17 +39,43 @@
 export default {
   data () {
     return {
-      username: '',
-      password: ''
+      username: '1111',
+      password: '111',
+      userLists: [],
+      addUserLists: [],
+      modUser: {},
+      delUserLists: [],
+      user: {}
     }
+  },
+  async mounted () {
+    const lists = await this.$axios.get('/api/users')
+    const lists2 = await this.$axios.get('/api/users/1')
+    const lists3 = await this.$axios.post('/api/users', {
+      'id': 4,
+      'name': 'mongodb',
+      'password': 'password4',
+      'profession': 'database'
+    })
+    const lists4 = await this.$axios.put('/api/users/1', {
+      'name': 'mongodb',
+      'password': 'password4',
+      'profession': 'database'
+    })
+    const lists5 = await this.$axios.delete('/api/users/1')
+    this.userLists = lists.data
+    this.user = lists2.data
+    this.addUserLists = lists3.data
+    this.modUser = lists4.data
+    this.delUserLists = lists5.data
   },
   methods: {
     async loginBtn () {
-      const res = await this.$axios.post('/api/login', {
+      const { msg } = await this.$axios.post('/api/login', {
         username: this.username,
         password: this.password
       })
-      console.log(res)
+      alert(msg)
     }
   }
 }
@@ -50,5 +98,15 @@ export default {
   color: #526488;
   word-spacing: 5px;
   padding-bottom: 15px;
+}
+
+.lists{
+  display: flex;
+  flex-direction: row;
+}
+.lists .list{
+  flex: 1;
+  border:1px solid #aaa;
+  margin: 10px;
 }
 </style>
