@@ -299,3 +299,101 @@ const lists5 = await this.$axios.delete("/api/users/1");
 ```
 
 ![restful api实践结果](https://github.com/zptime/resources/blob/master/images/koa-restful-api.png)
+
+## MongoDB
+
+> MongoDB 是一个基于分布式文件存储的数据库，由 C++ 语言编写，旨在为 WEB 应用提供可扩展的高性能数据存储解决方案。MongoDB 是一个介于关系数据库和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的。
+> Mongoose：一款为异步工作环境设计的 MongoDB 对象建模工具。
+> 文档地址：[https://mongoosejs.com/docs/guide.html](https://mongoosejs.com/docs/guide.html)
+
+- 安装mongoose。mongoose里面有三个概念，schemal、model、entity:
+  - Schema：一种以文件形式存储的数据库模型骨架，不具备数据库的操作能力
+  - Model：由Schema发布生成的模型，具有抽象属性和行为的数据库操作
+  - Entity：由Model创建的实体，它的操作也会影响数据库
+
+```js
+// 安装mongoose
+$ npm install i mongoose
+
+// mongodb数据库连接配置
+// server/index.js
+require('./dbs/config')
+```
+
+- 连接数据库(server/dbs/config.js)
+
+```js
+const mongoose = require("mongoose");
+const DB_URL = "mongodb://localhost:27017/idloan"; // idloan(数据库名称)
+
+/**
+ * 连接
+ */
+const db = mongoose.connect(DB_URL, { useNewUrlParser: true });
+
+/**
+ * 连接成功
+ */
+mongoose.connection.on("connected", function() {
+  console.log("Mongoose connection open to " + DB_URL);
+});
+
+/**
+ * 连接异常
+ */
+mongoose.connection.on("error", function(err) {
+  console.log("Mongoose connection error: " + err);
+});
+
+/**
+ * 连接断开
+ */
+mongoose.connection.on("disconnected", function() {
+  console.log("Mongoose connection disconnected");
+});
+
+module.exports = db;
+```
+
+- 定义和添加模型(server/dbs/models/user.js)
+
+```js
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+
+// 定义模型
+const userSchema = new Schema({
+  'id': Number,
+  'name': String,
+  'password': String,
+  'profession': String
+})
+
+// 使用模式“编译”模型
+module.exports = mongoose.model('User', userSchema)
+```
+
+- 编写api接口，从数据库获取数据(server/routes/mongoUser.js)
+
+```js
+const router = require('koa-router')()
+const User = require('../dbs/models/user.js')
+
+// -- Routes --
+router.prefix('/mongo')
+
+// 获取用户列表
+router.get('/users', async (ctx) => {
+  const lists = await User.find()
+
+  ctx.body = {
+    code: 0,
+    data: lists,
+    msg: '获取成功'
+  }
+})
+
+module.exports = router
+```
+
+![数据库图形化展示](https://github.com/zptime/resources/blob/master/images/mongodb-table-user.png)

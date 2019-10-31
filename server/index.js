@@ -6,6 +6,8 @@ const json = require('koa-json')
 
 const app = new Koa()
 
+require('./dbs/config') // mongodb数据库连接配置
+
 app.use(json()) // 美观地输出JSON response
 app.use(bodyParser()) // 配置解析post的bodypaser
 
@@ -14,6 +16,7 @@ const config = require('../nuxt.config.js')
 config.dev = app.env !== 'production'
 
 const user = require('./routes/user')
+const mongoUser = require('./routes/mongoUser')
 
 async function start () {
   // Instantiate nuxt.js
@@ -34,6 +37,7 @@ async function start () {
 
   // routes 配置服务端路由
   app.use(user.routes(), user.allowedMethods())
+  app.use(mongoUser.routes(), mongoUser.allowedMethods())
 
   app.use((ctx) => {
     ctx.status = 200
