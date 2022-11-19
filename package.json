@@ -21,7 +21,7 @@
     "koa-json": "^2.0.2",
     "koa-router": "^7.4.0",
     "mongoose": "^5.7.7",
-    "nuxt": "^2.0.0"
+    "nuxt": "^2.15.8"
   },
   "devDependencies": {
     "nodemon": "^1.18.9",
